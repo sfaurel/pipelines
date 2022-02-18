@@ -26,7 +26,7 @@
       "fetch_materials": true,
       "never_cleanup_artifacts": false,
       "clean_working_directory": false,
-      "approval": {
+      "approval": 
         "type": "manual",
         "users": [],
         "roles": [],
@@ -49,7 +49,6 @@
           "tabs": [],
           "resources": [],
           "artifacts": [],
-          "elastic_profile_id": "agent-helm3",
           "timeout": 0.0,
           "tasks": [
             {
