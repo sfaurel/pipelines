@@ -1,0 +1,91 @@
+{
+  "group": "{{PIPELINE_GROUP}}",
+  "name": "{{PIPELINE_NAME}}",
+  "display_order_weight": -1.0,
+  "label_template": "${COUNT}",
+  "lock_behavior": "none",
+  "environment_variables": [],
+  "parameters": [],
+  "materials": [  
+    {
+      "url": "{{GIT_URL}}",
+      "branch": "master",
+      "shallow_clone": false,
+      "filter": {
+        "ignore": [],
+        "whitelist": []
+      },
+      "destination": "fuentes",
+      "auto_update": true,
+      "type": "git"
+    }
+  ],
+  "stages": [
+    {
+      "name": "defaultStage",
+      "fetch_materials": true,
+      "never_cleanup_artifacts": false,
+      "clean_working_directory": false,
+      "approval": {
+        "type": "manual",
+        "users": [],
+        "roles": [],
+        "allow_only_on_success": false
+      },
+      "environment_variables": [],
+      "jobs": [
+        {
+          "name": "create_docker",
+          "environment_variables": [
+            {
+              "name": "NEXUS",
+              "value": "{{NEXUS}}"
+            },
+            {
+              "name": "IMAGEN_TAG",
+              "value": "{{IMAGEN_TAG}}"
+            }
+          ],
+          "tabs": [],
+          "resources": [],
+          "artifacts": [],
+          "timeout": 0.0,
+          "tasks": [
+            {
+              "command": "/bin/bash",
+              "timeout": -1.0,
+              "arguments": [
+                "-c",
+                "cat /home/go/serviceaccount/credentials_docker.txt | docker login -u developer --password-stdin $NEXUS"
+              ],
+              "run_if": "passed",
+              "type": "exec"
+            },
+            {
+              "command": "/bin/bash",
+              "working_directory": "fuentes",
+              "timeout": -1.0,
+              "arguments": [
+                "-c",
+                "docker build --tag $NEXUS/$IMAGEN_TAG:$(git rev-parse --abbrev-ref HEAD)-$(git rev-parse --short\u003d7 HEAD) ."
+              ],
+              "run_if": "passed",
+              "type": "exec"
+            },
+            {
+              "command": "/bin/bash",
+              "working_directory": "fuentes",
+              "timeout": -1.0,
+              "arguments": [
+                "-c",
+                "docker push $NEXUS/$IMAGEN_TAG:$(git rev-parse --abbrev-ref HEAD)-$(git rev-parse --short\u003d7 HEAD)"
+              ],
+              "run_if": "passed",
+              "type": "exec"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
