@@ -47,7 +47,7 @@ if __name__ == "__main__":
                 value = input(
                     f"insert value for {variable} [{default}]:\n") or default
                 if is_name:
-                    output_filename = f"{value}.json"
+                    output_filename = f"{value}.gopipeline.json"
                     output_path = os.path.join(script_dir, output_filename)
                     exist_path = os.path.join(script_dir, "*", output_filename)
                     print(exist_path)
